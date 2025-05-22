@@ -3,21 +3,21 @@ import AdminPanel from './AdminPanel'
 
 export default function AdminLogin() {
   const [password, setPassword] = useState('')
-  const [loggedIn, setLoggedIn] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const correctPassword = 'marcello123'
 
   const handleLogin = () => {
     if (password === correctPassword) {
-      setLoggedIn(true)
+      setIsLoggedIn(true)
     } else {
-      alert('Złe hasło')
+      alert("Złe hasło")
     }
   }
 
-  return loggedIn ? (
+  return isLoggedIn ? (
     <AdminPanel />
   ) : (
-    <div style={{ padding: '2rem' }}>
+    <div style={{ padding: "2rem" }}>
       <h2>Logowanie administratora</h2>
       <input
         type="password"
