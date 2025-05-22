@@ -4,13 +4,12 @@ import AdminPanel from './AdminPanel'
 export default function AdminLogin() {
   const [password, setPassword] = useState('')
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const correctPassword = 'marcello123'
 
   const handleLogin = () => {
-    if (password === correctPassword) {
+    if (password === 'marcello123') {
       setIsLoggedIn(true)
     } else {
-      alert('Złe hasło')
+      alert('Błędne hasło')
     }
   }
 
@@ -21,11 +20,12 @@ export default function AdminLogin() {
       <h2>Logowanie administratora</h2>
       <input
         type="password"
-        placeholder="Hasło"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        placeholder="Hasło"
       />
-      <button onClick={handleLogin}>Zaloguj</button>
+      <br />
+      <button onClick={handleLogin} style={{ marginTop: '1rem' }}>Zaloguj</button>
     </div>
   )
 }
