@@ -10,14 +10,14 @@ export default function AdminLogin() {
     if (password === correctPassword) {
       setIsLoggedIn(true)
     } else {
-      alert("Złe hasło")
+      alert('Złe hasło')
     }
   }
 
   return isLoggedIn ? (
     <AdminPanel />
   ) : (
-    <div style={{ padding: "2rem" }}>
+    <div style={{ padding: '2rem' }}>
       <h2>Logowanie administratora</h2>
       <input
         type="password"

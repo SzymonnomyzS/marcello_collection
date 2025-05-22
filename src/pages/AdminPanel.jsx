@@ -1,67 +1,40 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
+import { supabase } from '../supabase'
 
 export default function AdminPanel() {
   const [file, setFile] = useState(null)
   const [description, setDescription] = useState("")
-  const [chairs, setChairs] = useState([])
 
-  useEffect(() => {
-    const saved = localStorage.getItem("chairs")
-    if (saved) setChairs(JSON.parse(saved))
-  }, [])
-
-  const saveChairs = (newChairs) => {
-    setChairs(newChairs)
-    localStorage.setItem("chairs", JSON.stringify(newChairs))
-  }
-
-  const handleAdd = () => {
+  const handleSubmit = async () => {
     if (!file || !description) {
       alert("Wybierz zdjęcie i wpisz opis.")
       return
     }
 
-    const reader = new FileReader()
-    reader.onloadend = () => {
-      const newChair = { image: reader.result, description }
-      const updated = [...chairs, newChair]
-      saveChairs(updated)
-      setDescription("")
-      setFile(null)
-    }
-    reader.readAsDataURL(file)
-  }
+    const fileName = `${Date.now()}_${file.name}`
+    const { error: uploadError } = await supabase.storage.from("chairimage").upload(fileName, file)
+    if (uploadError) return alert("Błąd podczas przesyłania zdjęcia: " + uploadError.message)
 
-  const handleDelete = (index) => {
-    const updated = chairs.filter((_, i) => i !== index)
-    saveChairs(updated)
+    const { error: insertError } = await supabase.from("chairs").insert([{ image_url: fileName, description }])
+    if (insertError) return alert("Błąd zapisu do bazy: " + insertError.message)
+
+    alert("Krzesło dodane!")
+    setDescription("")
+    setFile(null)
   }
 
   return (
-    <div style={{ padding: "2rem" }}>
+    <div style={{ padding: '2rem' }}>
       <h2>Dodaj krzesło</h2>
-      <input type="file" onChange={(e) => setFile(e.target.files[0])} />
-      <br />
+      <input type="file" onChange={e => setFile(e.target.files[0])} /><br />
       <input
         type="text"
-        placeholder="Opis"
         value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        style={{ marginTop: "1rem" }}
-      />
-      <br />
-      <button onClick={handleAdd} style={{ marginTop: "1rem" }}>
-        Dodaj
-      </button>
-
-      <h3 style={{ marginTop: "2rem" }}>Dodane krzesła</h3>
-      {chairs.map((chair, index) => (
-        <div key={index} style={{ marginBottom: "1rem" }}>
-          <img src={chair.image} alt="" width="200" />
-          <p>{chair.description}</p>
-          <button onClick={() => handleDelete(index)}>Usuń</button>
-        </div>
-      ))}
+        placeholder="Opis"
+        onChange={e => setDescription(e.target.value)}
+        style={{ marginTop: '1rem' }}
+      /><br />
+      <button onClick={handleSubmit} style={{ marginTop: '1rem' }}>Dodaj</button>
     </div>
   )
 }
