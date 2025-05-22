@@ -1,5 +1,5 @@
 {
-  "name": "marcello-local-auth",
+  "name": "marcello-local-auth-manage-multi",
   "version": "1.0.0",
   "scripts": {
     "dev": "vite",

@@ -1,12 +1,19 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 export default function AdminPanel() {
   const [file, setFile] = useState(null)
   const [description, setDescription] = useState("")
-  const [chairs, setChairs] = useState(() => {
+  const [chairs, setChairs] = useState([])
+
+  useEffect(() => {
     const saved = localStorage.getItem("chairs")
-    return saved ? JSON.parse(saved) : []
-  })
+    if (saved) setChairs(JSON.parse(saved))
+  }, [])
+
+  const saveChairs = (newChairs) => {
+    setChairs(newChairs)
+    localStorage.setItem("chairs", JSON.stringify(newChairs))
+  }
 
   const handleAdd = () => {
     if (!file || !description) {
@@ -18,12 +25,16 @@ export default function AdminPanel() {
     reader.onloadend = () => {
       const newChair = { image: reader.result, description }
       const updated = [...chairs, newChair]
-      setChairs(updated)
-      localStorage.setItem("chairs", JSON.stringify(updated))
+      saveChairs(updated)
       setDescription("")
       setFile(null)
     }
     reader.readAsDataURL(file)
+  }
+
+  const handleDelete = (index) => {
+    const updated = chairs.filter((_, i) => i !== index)
+    saveChairs(updated)
   }
 
   return (
@@ -42,6 +53,15 @@ export default function AdminPanel() {
       <button onClick={handleAdd} style={{ marginTop: "1rem" }}>
         Dodaj
       </button>
+
+      <h3 style={{ marginTop: "2rem" }}>Dodane krzesła</h3>
+      {chairs.map((chair, index) => (
+        <div key={index} style={{ marginBottom: "1rem" }}>
+          <img src={chair.image} alt="" width="200" />
+          <p>{chair.description}</p>
+          <button onClick={() => handleDelete(index)}>Usuń</button>
+        </div>
+      ))}
     </div>
   )
 }
