@@ -6,18 +6,22 @@ export default function ClientPage() {
 
   useEffect(() => {
     const loadChairs = async () => {
-      const { data, error } = await supabase.from("chairs").select("*")
-      if (!error) setChairs(data)
+      const { data } = await supabase.from("chairs").select("*")
+      if (data) setChairs(data)
     }
     loadChairs()
   }, [])
 
   return (
-    <div>
+    <div style={{ padding: '2rem' }}>
       <h1>Marcello Collection</h1>
-      {chairs.map(chair => (
-        <div key={chair.id}>
-          <img src={`https://YOUR_PROJECT_ID.supabase.co/storage/v1/object/public/chair-images/${chair.image_url}`} alt="" width="200" />
+      {chairs.map((chair) => (
+        <div key={chair.id} style={{ marginBottom: '1rem' }}>
+          <img
+            src={`https://hwwgmveztxngpshceyoz.supabase.co/storage/v1/object/public/chair-images/${chair.image_url}`}
+            alt=""
+            width="200"
+          />
           <p>{chair.description}</p>
         </div>
       ))}
